@@ -20,7 +20,7 @@ def test_sequence_fitness(sequence, permitted_answers):
     return total_match_score - penalty
 
 # Input your own sequence of 3 words
-sequences = [('shine', 'party', 'could'), ('crane', 'pouty', 'gilds'), ('field', 'mount', 'spark'), ('aahed', 'abcee', 'sacree'), ('aahed', 'aargh', 'saree')]
+sequences = [('shine', 'party', 'could'), ('crane', 'pouty', 'gilds'), ('field', 'mount', 'spark'), ('aahed', 'abcee', 'saree'), ('aahed', 'aargh', 'saree')]
 for your_sequence in sequences:
     fitness = test_sequence_fitness(your_sequence, permitted_answers)
     print(f'Fitness of your sequence {your_sequence}: {fitness}')
