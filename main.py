@@ -5,7 +5,7 @@ def load_word_list():
 
 def eliminate_words(allowed_answers, guess, response):
     # Eliminate words that don't match the response
-    
+
     for index in range(len(guess)):
         if response[index] == 'g' or response[index] == 'G':
             answer = 0
@@ -24,6 +24,15 @@ def eliminate_words(allowed_answers, guess, response):
                         print("Removing", allowed_answers[answer], "because", guess[index], "is black but", allowed_answers[answer][index], "is not.")
                     allowed_answers.pop(answer)
                     continue
+                else:
+                    if guess[index] in allowed_answers[answer]:
+                        for letter in range(len(guess)):
+                            if guess[letter] == guess[index] and response[letter] == 'g' or response[letter] == 'G':
+                                break
+                        if(allowed_answers[answer] == real_word):
+                            print("Removing", allowed_answers[answer], "because", guess[index], "is black but", allowed_answers[answer][index], "is not.")
+                        allowed_answers.pop(answer)
+                        continue
                 answer += 1
             # TODO add code to eliminate words that contain black letters as long as they are not marked green or yellow elsewhere
         elif response[index] == 'y' or response[index] == 'Y':
