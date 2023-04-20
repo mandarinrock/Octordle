@@ -1,5 +1,5 @@
 import word_lists
-real_word = 'dance'
+real_word = ''
 
 debug = True
 debug = False
@@ -69,41 +69,70 @@ def eliminate_words(allowed_answers, guess, response):
                     allowed_answers.pop(answer)
                     continue
                 answer += 1
-    print("New length:", len(allowed_answers))
-    if len(allowed_answers) == 1:
-        print(allowed_answers[0])
-    elif guess == 'could':
-        print(allowed_answers)
-    elif len(allowed_answers) < 100 and debug:
-        print(allowed_answers)
+    if debug:
+        print("New length:", len(allowed_answers))
+        if len(allowed_answers) == 1:
+            print(allowed_answers[0])
+        # elif guess == 'could':
+        #     print(allowed_answers)
+        elif len(allowed_answers) < 100 and debug:
+            print(allowed_answers)
     return allowed_answers
 
-# def test_guesses(allowed_answers, allowed_guesses):
-#     # Test all guesses
-#     best_score = len(allowed_answers)
-#     best_guesses = ['', '', '']
-#     for first in allowed_guesses:
-#         response = input("Response for " + guess + ": ")
-#         allowed_answers = eliminate_words(allowed_answers, guess, response)
-#     return allowed_answers
+def score_guesses(guesses, allowed_answers):
+    # Score guesses
+    score = 0
+    print("Scoring guesses:", guesses)
+    for answer in allowed_answers:
+        temp_answers = allowed_answers.copy()
+        for guess in guesses:
+            temp_answers = eliminate_words(temp_answers, guess, generate_response(guess, answer))
+        score += len(temp_answers)
 
+    score = score / len(allowed_answers)
+    print("Score for " + str(guesses) + ":" + str(score))
+    return score
+
+def generate_guesses(allowed_guesses, allowed_answers):
+    # Generate guesses
+    best_guess = ''
+    best_score = len(allowed_answers)
+    best_score = score_guesses(['shine', 'party', 'could'], allowed_answers)
+    for first in range(len(allowed_guesses)):
+        for second in range(first + 1, len(allowed_guesses)):
+            for third in range(second + 1, len(allowed_guesses)):
+                # for fourth in range(third + 1, len(allowed_guesses)):
+                guesses = [allowed_guesses[first], allowed_guesses[second], allowed_guesses[third]]
+                score = score_guesses(guesses, allowed_answers)
+                if score < best_score:
+                    best_guess = guesses
+                    best_score = score
+                    print("New best guess:", best_guess, "with score", best_score)
+                    with open('best_guesses.txt', "a") as f:
+                        f.write(str(best_guess) + " " + str(best_score) + "\n")
+    return best_guess, best_score
 
 def main():
     allowed_answers, allowed_guesses = load_word_list()
     # print(allowed_answers)
     # print(allowed_guesses)
-    print(generate_response('shine', 'dance'))
-    print(generate_response('party', 'dance'))
-    print(generate_response('could', 'dance'))
-    print(generate_response('dance', 'dance'))
-    return
+    # print(generate_response('shine', 'dance'))
+    # print(generate_response('party', 'dance'))
+    # print(generate_response('could', 'dance'))
+    # print(generate_response('dance', 'dance'))
+    # return
 
-    print("Length:", len(allowed_answers))
+    # print("Length:", len(allowed_answers))
 
-    while len(allowed_answers) > 1:
-        guess = input("Guess a word: ")
-        response = input("Response: ")
-        allowed_answers = eliminate_words(allowed_answers, guess, response)
+    # while len(allowed_answers) > 1:
+    #     guess = input("Guess a word: ")
+    #     response = input("Response: ")
+    #     allowed_answers = eliminate_words(allowed_answers, guess, response)
+    score_guesses(['shine', 'party', 'could'], allowed_answers)
+    score_guesses(['shine', 'party', 'could'], allowed_answers)
+
+
+    generate_guesses(allowed_guesses, allowed_answers)
 
 if __name__ == '__main__':
     main()
