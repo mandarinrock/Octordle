@@ -128,8 +128,8 @@ def main():
     #     guess = input("Guess a word: ")
     #     response = input("Response: ")
     #     allowed_answers = eliminate_words(allowed_answers, guess, response)
-    score_guesses(['shine', 'party', 'could'], allowed_answers)
-    score_guesses(['shine', 'party', 'could'], allowed_answers)
+    # score_guesses(['shine', 'party', 'could'], allowed_answers)
+    # score_guesses(['crane', 'pouty', 'gilds'], allowed_answers)
 
 
     generate_guesses(allowed_guesses, allowed_answers)
