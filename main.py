@@ -97,13 +97,13 @@ def score_guesses(guesses, allowed_answers):
         float: The score for the given guesses.
     """
     score = 0
-    print("Scoring guesses:", guesses)
+    # print("Scoring guesses:", guesses)
     for answer in allowed_answers:
         temp_answers = allowed_answers.copy()
         for guess in guesses:
             temp_answers = eliminate_words(temp_answers, guess, generate_response(guess, answer))
         score += len(temp_answers)
-
+        # print(answer, temp_answers)
     score = score / len(allowed_answers)
     print("Score for " + str(guesses) + ":" + str(score))
     return score
