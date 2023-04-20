@@ -1,7 +1,26 @@
 import word_lists
-real_word = ''
+real_word = 'dance'
+
+debug = True
+debug = False
+
 def load_word_list():
     return word_lists.allowed_answers, word_lists.allowed_guesses
+
+def generate_response(guess, answer=real_word):
+    # Generate response
+    response = ''
+    for index in range(len(guess)):
+        if guess[index] == answer[index]:
+            response += 'g'
+        elif guess[index] in answer:
+            response += 'y'
+        else:
+            response += 'b'
+    if debug:
+        print("Response:", response)
+    return response
+
 
 def eliminate_words(allowed_answers, guess, response):
     # Eliminate words that don't match the response
@@ -55,14 +74,30 @@ def eliminate_words(allowed_answers, guess, response):
         print(allowed_answers[0])
     elif guess == 'could':
         print(allowed_answers)
-    elif len(allowed_answers) < 100:
+    elif len(allowed_answers) < 100 and debug:
         print(allowed_answers)
     return allowed_answers
+
+# def test_guesses(allowed_answers, allowed_guesses):
+#     # Test all guesses
+#     best_score = len(allowed_answers)
+#     best_guesses = ['', '', '']
+#     for first in allowed_guesses:
+#         response = input("Response for " + guess + ": ")
+#         allowed_answers = eliminate_words(allowed_answers, guess, response)
+#     return allowed_answers
+
 
 def main():
     allowed_answers, allowed_guesses = load_word_list()
     # print(allowed_answers)
     # print(allowed_guesses)
+    print(generate_response('shine', 'dance'))
+    print(generate_response('party', 'dance'))
+    print(generate_response('could', 'dance'))
+    print(generate_response('dance', 'dance'))
+    return
+
     print("Length:", len(allowed_answers))
 
     while len(allowed_answers) > 1:
