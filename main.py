@@ -143,7 +143,10 @@ def generate_guesses(allowed_answers):
             guesses = [allowed_answers[first], allowed_answers[second]]
             if allowed_answers[first][0] == allowed_answers[second][0] or allowed_answers[first][1] == allowed_answers[second][1] or allowed_answers[first][2] == allowed_answers[second][2] or allowed_answers[first][3] == allowed_answers[second][3] or allowed_answers[first][4] == allowed_answers[second][4]:
                 continue
-
+            if 's' not in allowed_answers[first] and 's' not in allowed_answers[second]:
+                continue
+            if 'e' not in allowed_answers[first] and 'e' not in allowed_answers[second]:
+                continue
 
             score = score_guesses(guesses, allowed_answers, best_score)
             print("[" + str(cur) + "] Score for " + str(guesses) + ":" + str(score))
