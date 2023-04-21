@@ -85,7 +85,7 @@ def eliminate_words(allowed_answers, guess, response):
                 answer += 1
     return allowed_answers
 
-def score_guesses(guesses, allowed_answers):
+def score_guesses(guesses, allowed_answers, best_score):
     """
     Score the guesses based on their ability to reduce the list of allowed answers.
 
@@ -97,14 +97,19 @@ def score_guesses(guesses, allowed_answers):
         float: The score for the given guesses.
     """
     score = 0
+    worst = 7
     # print("Scoring guesses:", guesses)
     for answer in allowed_answers:
         temp_answers = allowed_answers.copy()
         for guess in guesses:
             temp_answers = eliminate_words(temp_answers, guess, generate_response(guess, answer))
+        # if len(temp_answers) > worst:
+        #     return best_score
         score += len(temp_answers)
+        if score > best_score:
+            return score
         # print(answer, temp_answers)
-    score = score / len(allowed_answers)
+    # score = score / len(allowed_answers)
     print("Score for " + str(guesses) + ":" + str(score))
     return score
 
@@ -120,13 +125,35 @@ def generate_guesses(allowed_guesses, allowed_answers):
         tuple: A tuple containing the best guesses and the best score.
     """
     best_guess = ''
-    best_score = len(allowed_answers)
-    best_score = score_guesses(['shine', 'party', 'could'], allowed_answers)
-    for first in range(len(allowed_guesses)):
-        for second in range(first + 1, len(allowed_guesses)):
-            for third in range(second + 1, len(allowed_guesses)):
-                guesses = [allowed_guesses[first], allowed_guesses[second], allowed_guesses[third]]
-                score = score_guesses(guesses, allowed_answers)
+    best_score = len(allowed_answers) * 1.7
+    # best_score = 3000
+    # best_score = score_guesses(['shine', 'party', 'could'], allowed_answers, best_score)
+    cur = 0
+    for first in range(len(allowed_answers)):
+        for second in range(first + 1, len(allowed_answers)):
+            # print(allowed_answers[first], allowed_answers[second], cur)
+            for third in range(second + 1, len(allowed_answers)):
+                cur += 1
+                guesses = [allowed_answers[first], allowed_answers[second], allowed_answers[third]]
+                if allowed_answers[first][0] == allowed_answers[second][0] or allowed_answers[first][0] == allowed_answers[third][0] or allowed_answers[second][0] == allowed_answers[third][0]:
+                    continue
+                if allowed_answers[first][1] == allowed_answers[second][1] or allowed_answers[first][1] == allowed_answers[third][1] or allowed_answers[second][1] == allowed_answers[third][1]:
+                    continue
+                if allowed_answers[first][2] == allowed_answers[second][2] or allowed_answers[first][2] == allowed_answers[third][2] or allowed_answers[second][2] == allowed_answers[third][2]:
+                    continue
+                if allowed_answers[first][3] == allowed_answers[second][3] or allowed_answers[first][3] == allowed_answers[third][3] or allowed_answers[second][3] == allowed_answers[third][3]:
+                    continue
+                if allowed_answers[first][4] == allowed_answers[second][4] or allowed_answers[first][4] == allowed_answers[third][4] or allowed_answers[second][4] == allowed_answers[third][4]:
+                    continue
+                if 's' not in allowed_answers[first] and 's' not in allowed_answers[second] and 's' not in allowed_answers[third]:
+                    continue
+                if 'e' not in allowed_answers[first] and 'e' not in allowed_answers[second] and 'e' not in allowed_answers[third]:
+                    continue
+
+
+                score = score_guesses(guesses, allowed_answers, best_score)
+                # print("[" + str(cur) + "/12406605875] Score for " + str(guesses) + ":" + str(score))
+                # print("Score for " + str(guesses) + ":" + str(score))
                 if score < best_score:
                     best_guess = guesses
                     best_score = score
