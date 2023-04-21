@@ -105,7 +105,9 @@ def score_guesses(guesses, allowed_answers, best_score):
         score += len(temp_answers)
         if score > best_score:
             # print("Score for " + str(guesses) + ":" + str(score))
+            print("bad")
             return score
+    print(score)
     # print("Score for " + str(guesses) + ":" + str(score))
     return score
 
@@ -130,32 +132,55 @@ def generate_guesses(allowed_answers):
         tuple: A tuple containing the best guesses and the best score.
     """
     best_guess = ''
-    best_score = len(allowed_answers) * 100
-    best_score = score_guesses(['oaken', 'cupid'], allowed_answers, best_score)
-    best_score = score_guesses(['shine', 'party'], allowed_answers, best_score)
+    best_score = len(allowed_answers) * len(allowed_answers) * len(allowed_answers) * len(allowed_answers)
+    # best_score = score_guesses(['oaken', 'cupid'], allowed_answers, best_score)
+    # best_score = score_guesses(['shine', 'party'], allowed_answers, best_score)
+    # best_score = score_guesses(['shine', 'party', 'could'], allowed_answers, best_score)
+    # best_score = 10000
     # results = process_guesses(allowed_answers, best_score)
     # print("Results:", results)
     cur = 0
     for first in range(len(allowed_answers)):
         for second in range(first + 1, len(allowed_answers)):
-            # score = results[cur]
-            cur += 1
-            guesses = [allowed_answers[first], allowed_answers[second]]
-            if allowed_answers[first][0] == allowed_answers[second][0] or allowed_answers[first][1] == allowed_answers[second][1] or allowed_answers[first][2] == allowed_answers[second][2] or allowed_answers[first][3] == allowed_answers[second][3] or allowed_answers[first][4] == allowed_answers[second][4]:
-                continue
-            if 's' not in allowed_answers[first] and 's' not in allowed_answers[second]:
-                continue
-            if 'e' not in allowed_answers[first] and 'e' not in allowed_answers[second]:
-                continue
+            for third in range(second + 1, len(allowed_answers)):
 
-            score = score_guesses(guesses, allowed_answers, best_score)
-            print("[" + str(cur) + "] Score for " + str(guesses) + ":" + str(score))
-            if score < best_score:
-                best_guess = guesses
-                best_score = score
-                print("New best guess:", best_guess, "with score", best_score)
-                with open('best_guesses.txt', "a") as f:
-                    f.write(str(best_guess) + " " + str(best_score) + "\n")
+                # score = results[cur]
+                cur += 1
+                guesses = [allowed_answers[first], allowed_answers[second], allowed_answers[third]]
+                if guesses[0][0] == guesses[1][0] or guesses[0][1] == guesses[1][1] or guesses[0][2] == guesses[1][2] or guesses[0][3] == guesses[1][3] or guesses[0][4] == guesses[1][4]:
+                    continue
+                if guesses[0][0] == guesses[2][0] or guesses[0][1] == guesses[2][1] or guesses[0][2] == guesses[2][2] or guesses[0][3] == guesses[2][3] or guesses[0][4] == guesses[2][4]:
+                    continue
+                if guesses[1][0] == guesses[2][0] or guesses[1][1] == guesses[2][1] or guesses[1][2] == guesses[2][2] or guesses[1][3] == guesses[2][3] or guesses[1][4] == guesses[2][4]:
+                    continue
+                if 's' not in guesses[0] and 's' not in guesses[1] and 's' not in guesses[2]:
+                    continue
+                if 'e' not in guesses[0] and 'e' not in guesses[1] and 'e' not in guesses[2]:
+                    continue
+                if 'a' not in guesses[0] and 'a' not in guesses[1] and 'a' not in guesses[2]:
+                    continue
+                if 't' not in guesses[0] and 't' not in guesses[1] and 't' not in guesses[2]:
+                    continue
+                if 'o' not in guesses[0] and 'o' not in guesses[1] and 'o' not in guesses[2]:
+                    continue
+                if 'n' not in guesses[0] and 'n' not in guesses[1] and 'n' not in guesses[2]:
+                    continue
+                if 'i' not in guesses[0] and 'i' not in guesses[1] and 'i' not in guesses[2]:
+                    continue
+                if 'r' not in guesses[0] and 'r' not in guesses[1] and 'r' not in guesses[2]:
+                    continue
+                if 'l' not in guesses[0] and 'l' not in guesses[1] and 'l' not in guesses[2]:
+                    continue
+
+                print("[" + str(cur) + "] Score for " + str(guesses), end=": ")
+                score = score_guesses(guesses, allowed_answers, best_score)
+                # print("[" + str(cur) + "] Score for " + str(guesses) + ":" + str(score))
+                if score < best_score:
+                    best_guess = guesses
+                    best_score = score
+                    print("New best guess:", best_guess, "with score", best_score)
+                    with open('best_guesses.txt', "a") as f:
+                        f.write(str(best_guess) + " " + str(best_score) + "\n")
     return best_guess, best_score
 
 def main():
