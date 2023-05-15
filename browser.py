@@ -12,41 +12,36 @@ driver = webdriver.Chrome(service=webdriver_service)
 driver.get('https://octordle.com/daily/100')
 
 # Wait for the page to load
-time.sleep(5)
+# time.sleep(1)
 
-guess = 'party'
-key = driver.find_element(By.XPATH, f'/html/body/div[1]/div/div[3]/div/div[2]/button[10]')
-key.click()
-key = driver.find_element(By.XPATH, f'/html/body/div[1]/div/div[3]/div/div[3]/button[1]')
-key.click()
-key = driver.find_element(By.XPATH, f'/html/body/div[1]/div/div[3]/div/div[2]/button[4]')
-key.click()
-key = driver.find_element(By.XPATH, f'/html/body/div[1]/div/div[3]/div/div[2]/button[5]')
-key.click()
-key = driver.find_element(By.XPATH, f'/html/body/div[1]/div/div[3]/div/div[2]/button[6]')
-key.click()
-key = driver.find_element(By.XPATH, f'/html/body/div[1]/div/div[3]/div/div[4]/button[9]')
-key.click()
-time.sleep(10)
+guesses = ['party']
+
+# Define the layout of the keyboard
+keyboard_layout = [
+    # list('1234567890'),
+    '',
+    '',
+    list(' qwertyuiop'),
+    list(' asdfghjkl'),
+    list(' zxcvbnm')
+]
+
+# Convert the layout into a dictionary mapping keys to their positions
+keyboard_mapping = {
+    key: (i, j)
+    for i, row in enumerate(keyboard_layout)
+    for j, key in enumerate(row)
+}
+
+for guess in guesses:
+    for letter in guess:
+        position = keyboard_mapping[letter]
+        # print(f'The position of {letter} is {position}') # DEBUG
+        driver.find_element(By.XPATH, f'/html/body/div[1]/div/div[3]/div/div[{position[0]}]/button[{position[1]}]').click()
+        # key.click()
+    driver.find_element(By.XPATH, f'/html/body/div[1]/div/div[3]/div/div[4]/button[9]').click()
+
+wait = input('Press enter to quit')
+# time.sleep(10)
 driver.quit()
 exit()
-keyboard = ['qwertyuiop','asdfghjkl','zxcvbnm']
-# For each letter in 'party', find the corresponding key and click it
-for letter in guess:
-    for row in range(len(keyboard)):
-        # print(letter)
-        if letter in keyboard[row]:
-            print(f'letter: {letter}')
-            print(f'keyboard[row+1] ({row+1}): {keyboard[row+1]}')
-            # //*[@id="keyboard-wrap"]/div[3]/button[5]
-            
-            print(f'keyboard[row+1].index({letter}) : {keyboard[row+1].index(letter)}')
-            # break
-            # key = driver.find_element(By.XPATH, f'//*[@id="keyboard-wrap"]/div[{row+1}]/button[{keyboard[row].index(letter)+1}]')
-            
-            key.click()
-            break
-
-
-# Remember to close the driver after you're done
-# driver.quit()
