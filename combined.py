@@ -201,10 +201,11 @@ def main():
     keyboard_mapping = get_keyboard_mapping()
     answer_lists = [word_lists.allowed_answers.copy() for _ in range(8)]
     # guesses = ['party', 'shine', 'could']
-    # guesses = ['party']
+    guesses = ['party']
     guesses = []
     game_logic(driver, guesses, answer_lists, keyboard_mapping)
     # wait = input('Press enter to quit')
+    time.sleep(5)
     driver.quit()
     exit()
 
