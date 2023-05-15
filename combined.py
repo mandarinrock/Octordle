@@ -202,7 +202,7 @@ def main():
     answer_lists = [word_lists.allowed_answers.copy() for _ in range(8)]
     # guesses = ['party', 'shine', 'could']
     guesses = ['party']
-    guesses = []
+    # guesses = []
     game_logic(driver, guesses, answer_lists, keyboard_mapping)
     # wait = input('Press enter to quit')
     time.sleep(5)
