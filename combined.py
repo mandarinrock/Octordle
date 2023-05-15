@@ -345,6 +345,8 @@ def game_logic(driver, guesses, answer_lists, keyboard_mapping):
             #     break
         except:
             print(f'All answers found!')
+            for word_num in range(1, 9):
+                print(f'Answer {word_num}: {answer_lists[word_num-1][0]}')
             return
 
 def main():
@@ -354,7 +356,7 @@ def main():
     answer_lists = [word_lists.allowed_answers.copy() for _ in range(8)]
     guesses = ['party', 'shine', 'could']
     game_logic(driver, guesses, answer_lists, keyboard_mapping)
-    wait = input('Press enter to quit')
+    # wait = input('Press enter to quit')
     driver.quit()
     exit()
 
