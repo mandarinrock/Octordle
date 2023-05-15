@@ -102,29 +102,30 @@ def game_logic(driver, guesses, answer_lists, keyboard_mapping):
                 if not answered[answer_lists.index(answer_list)]:
                     possible_answers.extend(answer_list)
 
-            # count the frequency of each letter in the possible answers
-            letter_freq = {}
+            # count the frequency of each letter in the possible answers by their positions
+            letter_freq_by_position = [{} for _ in range(5)]  # assuming words are of length 5
             for word in possible_answers:
-                for letter in word:
-                    if letter in letter_freq:
-                        letter_freq[letter] += 1
+                for i, letter in enumerate(word):
+                    if letter in letter_freq_by_position[i]:
+                        letter_freq_by_position[i][letter] += 1
                     else:
-                        letter_freq[letter] = 1
+                        letter_freq_by_position[i][letter] = 1
 
-            # find the word with the most common letters
+            # find the word with the most common letters by position
             max_common_letters = -1
             best_guess = None
             for word in possible_answers:
-                common_letters = sum(letter_freq[letter] for letter in word)
+                common_letters = sum(letter_freq_by_position[i][letter] for i, letter in enumerate(word) if letter in letter_freq_by_position[i])
                 if common_letters > max_common_letters:
                     max_common_letters = common_letters
                     best_guess = word
 
             guesses.append(best_guess)
 
+
         guess = guesses[cur_guess]
         # print(f'Guesses: {guesses}')
-        print(f'\nGuess {cur_guess+1}: {guess}\n')
+        # print(f'\nGuess {cur_guess+1}: {guess}\n')
         for letter in guess:
             position = keyboard_mapping[letter]
             # print(f'The position of {letter} is {position}') # DEBUG
@@ -141,33 +142,30 @@ def game_logic(driver, guesses, answer_lists, keyboard_mapping):
             for word_num in range(1, 9):
                 # if len(answer_lists[word_num-1]) == 1:
                 if answered[word_num-1]:
-                    print(f'Answer {word_num}: {answer_lists[word_num-1][0]}')
+                    # print(f'Answer {word_num}: {answer_lists[word_num-1][0]}')
                     # num_answered += 1
-                    continue
-                elif len(answer_lists[word_num-1]) < 1:
-                    print(f'Something went wrong with word {word_num}')
                     continue
                 result = ''
                 for letter_num in range(0, 5):
                     XPATH = f'/html/body/div[1]/div/div[2]/div[1]/div[{word_num}]/div[{cur_guess+1}]/div[{letter_num+1}]'
                     output = driver.find_element(By.XPATH, XPATH).get_attribute("style")
                     if output == 'background-color: rgb(255, 221, 102);':
-                        print(Fore.YELLOW + guess[letter_num] + Fore.RESET, end='')
+                        # print(Fore.YELLOW + guess[letter_num] + Fore.RESET, end='')
                         result += 'y'
                     elif output == 'background-color: rgb(0, 187, 51);':
-                        print(Fore.GREEN + guess[letter_num] + Fore.RESET, end='')
+                        # print(Fore.GREEN + guess[letter_num] + Fore.RESET, end='')
                         result += 'g'
                     else:
-                        try:
-                            print(guess[letter_num], end='')
-                            result += 'b'
-                        except:
-                            print(guess)
-                            print(letter_num)
+                        # try:
+                            # print(guess[letter_num], end='')
+                        result += 'b'
+                        # except:
+                        #     print(guess)
+                        #     print(letter_num)
                         # print(guess[letter_num], end='')
                         # result += 'b'
                 if result == 'ggggg':
-                    print(f'\tAnswer {word_num}: {guess}')
+                    # print(f'\tAnswer {word_num}: {guess}')
                     answered[word_num-1] = True
                     answer_lists[word_num-1] = [guess]
                     continue
@@ -175,9 +173,9 @@ def game_logic(driver, guesses, answer_lists, keyboard_mapping):
                 #TEMP
                 # backup = answer_lists[word_num-1].copy()
                 answer_lists[word_num-1] = eliminate_words(answer_lists[word_num-1], guess, result)
-                print(f'\t Possibilities: {len(answer_lists[word_num-1])}', end='')
+                # print(f'\t Possibilities: {len(answer_lists[word_num-1])}', end='')
                 if len(answer_lists[word_num-1]) == 1:
-                    print(f'\tAnswer {word_num}: {answer_lists[word_num-1][0]}', end='')
+                    # print(f'\tAnswer {word_num}: {answer_lists[word_num-1][0]}', end='')
                     if answer_lists[word_num-1][0] not in guesses:
                         guesses.append(answer_lists[word_num-1][0])
 
@@ -185,7 +183,7 @@ def game_logic(driver, guesses, answer_lists, keyboard_mapping):
                 #     print(f'\n Something went wrong')
                 #     print(f'Guess {cur_guess+1}: {guess}')
                 #     print(f'Answer {word_num}: {backup}')
-                print()
+                # print()
             # if num_answered == 8:
             #     print(f'All answers found!')
             #     break
@@ -197,15 +195,16 @@ def game_logic(driver, guesses, answer_lists, keyboard_mapping):
 
 def main():
     driver = setup_driver()
-    navigate_to_game(driver, f'https://octordle.com/daily/{random.randint(1, 365)}')
-    keyboard_mapping = get_keyboard_mapping()
-    answer_lists = [word_lists.allowed_answers.copy() for _ in range(8)]
-    guesses = ['party', 'shine', 'could']
-    # guesses = ['party']
-    # guesses = []
-    game_logic(driver, guesses, answer_lists, keyboard_mapping)
-    # wait = input('Press enter to quit')
-    time.sleep(5)
+    for game in range(10):
+        navigate_to_game(driver, f'https://octordle.com/daily/{random.randint(1, 365)}')
+        keyboard_mapping = get_keyboard_mapping()
+        answer_lists = [word_lists.allowed_answers.copy() for _ in range(8)]
+        # guesses = ['party', 'shine', 'could']
+        # guesses = ['party']
+        guesses = []
+        game_logic(driver, guesses, answer_lists, keyboard_mapping)
+        # wait = input('Press enter to quit')
+        time.sleep(3)
     driver.quit()
     exit()
 
