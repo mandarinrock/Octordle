@@ -6,6 +6,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 import time
 from colorama import Fore
 import word_lists
+import random
 
 def eliminate_words(allowed_answers, guess, response):
     """
@@ -36,15 +37,17 @@ def eliminate_words(allowed_answers, guess, response):
                     continue
                 else:
                     if guess[index] in allowed_answers[answer]:
-                        for letter in range(len(guess)):
-                            if guess[letter] == guess[index] and response[letter] == 'g' or response[letter] == 'G':
-                                break
-                        allowed_answers.pop(answer)
-                        continue
+                        # Get the count of green and yellow for the guess letter
+                        green_count = response.count('g')
+                        yellow_count = response.count('y')
+                        # Get the count of the guess letter in the word
+                        letter_count = allowed_answers[answer].count(guess[index])
+
+                        if letter_count > green_count + yellow_count:
+                            allowed_answers.pop(answer)
+                            continue
                 answer += 1
-            # TODO add code to eliminate words that contain black letters as long as they are not marked green or yellow elsewhere
         elif response[index] == 'y' or response[index] == 'Y':
-            # TODO add functionality to require multiple of the yellow'd letter if it is marked yellow but is also marked green elsewhere
             answer = 0
             while answer < len(allowed_answers):
                 if allowed_answers[answer][index] == guess[index]:
@@ -55,6 +58,7 @@ def eliminate_words(allowed_answers, guess, response):
                     continue
                 answer += 1
     return allowed_answers
+
 
 options = Options()
 options.add_argument("--log-level=3")  # Suppress messages below ERROR level
@@ -94,12 +98,14 @@ answer_lists = [word_lists.allowed_answers.copy(), word_lists.allowed_answers.co
 # for cur_guess in range(guesses):
 for cur_guess in range(14):
     if len(guesses) <= cur_guess:
-        # possible_answers = []
+        possible_answers = []
         for answer_list in answer_lists:
             if len(answer_list) > 1:
-                print(f'Answer list {answer_lists.index(answer_list)+1}: {answer_list}')
+                possible_answers += answer_list
 
-        guesses.append(input("Enter guess: ").lower())
+        # guesses.append(input("Enter guess: ").lower())
+        guesses.append(random.choice(possible_answers))
+
     guess = guesses[cur_guess]
     print(f'Guesses: {guesses}')
     print(f'Guess {cur_guess+1}: {guess}')
@@ -112,9 +118,11 @@ for cur_guess in range(14):
     driver.find_element(By.XPATH, f'/html/body/div[1]/div/div[3]/div/div[4]/button[9]').click()
 
     # print(f"Guess {cur_guess+1}: {guess}")
+    num_answered = 0
     for word_num in range(1, 9):
         if len(answer_lists[word_num-1]) == 1:
             print(f'Answer {word_num}: {answer_lists[word_num-1][0]}')
+            num_answered += 1
             continue
         elif len(answer_lists[word_num-1]) < 0:
             print(f'Something went wrong with word {word_num}')
@@ -152,6 +160,9 @@ for cur_guess in range(14):
             print(f'Guess {cur_guess+1}: {guess}')
             print(f'Answer {word_num}: {backup}')
         print()
+    if num_answered == 8:
+        print(f'All answers found!')
+        break
 
 
 wait = input('Press enter to quit')
