@@ -79,6 +79,7 @@ def get_keyboard_mapping():
 def setup_driver():
     options = Options()
     options.add_argument("--log-level=3")  # Suppress messages below ERROR level
+    options.add_argument("user-data-dir=/path/to/your/custom/profile")
     driver = webdriver.Chrome(options=options)
     return driver
 
@@ -93,17 +94,33 @@ def make_guess(driver, guess, keyboard_mapping):
     driver.find_element(By.XPATH, f'/html/body/div[1]/div/div[3]/div/div[4]/button[9]').click()
 
 def game_logic(driver, guesses, answer_lists, keyboard_mapping):
-    # for cur_guess in range(guesses):
     answered = [False] * 8
     for cur_guess in range(14):
         if len(guesses) <= cur_guess:
             possible_answers = []
             for answer_list in answer_lists:
-                if answered[answer_lists.index(answer_list)] == False:
-                    possible_answers += answer_list
+                if not answered[answer_lists.index(answer_list)]:
+                    possible_answers.extend(answer_list)
 
-            # guesses.append(input("Enter guess: ").lower())
-            guesses.append(random.choice(possible_answers))
+            # count the frequency of each letter in the possible answers
+            letter_freq = {}
+            for word in possible_answers:
+                for letter in word:
+                    if letter in letter_freq:
+                        letter_freq[letter] += 1
+                    else:
+                        letter_freq[letter] = 1
+
+            # find the word with the most common letters
+            max_common_letters = -1
+            best_guess = None
+            for word in possible_answers:
+                common_letters = sum(letter_freq[letter] for letter in word)
+                if common_letters > max_common_letters:
+                    max_common_letters = common_letters
+                    best_guess = word
+
+            guesses.append(best_guess)
 
         guess = guesses[cur_guess]
         # print(f'Guesses: {guesses}')
@@ -173,17 +190,19 @@ def game_logic(driver, guesses, answer_lists, keyboard_mapping):
             #     print(f'All answers found!')
             #     break
         except:
-            print(f'All answers found!')
+            print(f'All answers found in {cur_guess} guesses!')
             for word_num in range(1, 9):
                 print(f'Answer {word_num}: {answer_lists[word_num-1][0]}')
             return
 
 def main():
     driver = setup_driver()
-    navigate_to_game(driver, 'https://octordle.com/daily/100')
+    navigate_to_game(driver, f'https://octordle.com/daily/{random.randint(1, 365)}')
     keyboard_mapping = get_keyboard_mapping()
     answer_lists = [word_lists.allowed_answers.copy() for _ in range(8)]
-    guesses = ['party', 'shine', 'could']
+    # guesses = ['party', 'shine', 'could']
+    # guesses = ['party']
+    guesses = []
     game_logic(driver, guesses, answer_lists, keyboard_mapping)
     # wait = input('Press enter to quit')
     driver.quit()
